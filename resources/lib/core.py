@@ -31,7 +31,7 @@ xbmc.log("ICON " + str(addonicon))
 vw_miss = False
 if addon.getSetting('view-miss') == 'true': vw_miss = True
 
-# Retreive preferred quality from settings
+# Retrieve preferred quality from settings
 if addon.getSetting('preferred_quality') == 'Choose On Search': quality = 'choose'
 if addon.getSetting('preferred_quality') == 'Any': quality = 'any'
 if addon.getSetting('preferred_quality') == 'SD': quality = 'sd'
@@ -163,27 +163,34 @@ def list_quality_profiles():
 
 
 def list_movies(data):
+    #xbmc.log( "LISTT: DATA" + str(data), xbmc.LOGINFO)
     shows = []
     qdata = snr.get_queue()
-    xbmc.log( "LISTT: QDATA" + str(qdata))
+    #xbmc.log( "LISTT: QDATA" + str(qdata), xbmc.LOGINFO)
     qshows = []
     qnames = []
     for qshow in qdata:
         xbmc.log( "LISTT: " + str(qnames))
         name = qshow['movie']['title']
         qnames.append((name))
-        thumb = qshow['movie']['images'][0]['url']
-        fanart = qshow['movie']['images'][1]['url']
+        if qshow['movie']['images']:
+            thumb = qshow['movie']['images'][0]['url']
+        else:
+            thumb = None
+        if len(qshow['movie']['images']) > 1:
+            fanart = qshow['movie']['images'][1]['url']
+        else:
+            fanart = None
         totalsize = qshow['size'] * 1e-9
         perc = 100 - (100 * float(qshow['sizeleft'])/float(qshow['size']))
         name += '   [COLOR FF00FF00]Downloading %s%%[/COLOR] ' % round(perc, 1)
         name += ' [COLOR FF00FF00]of  %sGB[/COLOR] ' % round(totalsize, 2)
         show_id = qshow['movie']['id']
-        seasons = 'na'
-        dir_show = get_appended_path(dir_movies, str(show_id))
-        file = 'seasons.json'
-        file_path = get_appended_path(dir_show, file)
-        write_json(file_path, seasons)
+        #seasons = 'na'
+        #dir_show = get_appended_path(dir_movies, str(show_id))
+        #file = 'seasons.json'
+        #file_path = get_appended_path(dir_show, file)
+        #write_json(file_path, seasons)
         shows.append({'name': name, 'url': str(show_id), 'mode': 'getMovie', 'type': 'dir',
                       'images': {'thumb': thumb, 'fanart': fanart}})
 #        thumb = host_url + qshow['images'][0]['url'] + '?lastWrite=&apikey={}'.format(api_key)
@@ -193,6 +200,7 @@ def list_movies(data):
 
     xbmc.log( "LISTT: " + str(qnames))
     for show in data:
+        #xbmc.log("SHOW: " + str(show), xbmc.LOGINFO)
         name = show['title']
         down = str(show['downloaded'])
         if down == 'True':
@@ -208,15 +216,21 @@ def list_movies(data):
                 name += '[COLOR FF3576F9] 5.1[/COLOR] '
             name += '[COLOR FF3576F9] %s[/COLOR] ' % audiocodec
             name += ' [COLOR FF3576F9]  %sGB[/COLOR] ' % round(totalsize, 2)
-            thumb = host_url + show['images'][0]['url'] + '?lastWrite=&apikey={}'.format(api_key)
+            if show['images']:
+                thumb = host_url + show['images'][0]['url'] + '?lastWrite=&apikey={}'.format(api_key)
+            else:
+                thumb = None
             #banner = host_url + show['images'][1]['url'] + '&apikey={}'.format(api_key)
-            fanart = host_url + show['images'][1]['url'] + '?lastWrite=&apikey={}'.format(api_key)
+            if len(show['images']) > 1:
+                fanart = host_url + show['images'][1]['url'] + '?lastWrite=&apikey={}'.format(api_key)
+            else:
+                fanart = None
             show_id = show['id']
-            seasons = 'na'
-            dir_show = get_appended_path(dir_movies, str(show_id))
-            file = 'seasons.json'
-            file_path = get_appended_path(dir_show, file)
-            write_json(file_path, seasons)
+            #seasons = 'na'
+            #dir_show = get_appended_path(dir_movies, str(show_id))
+            #file = 'seasons.json'
+            #file_path = get_appended_path(dir_show, file)
+            #write_json(file_path, seasons)
             shows.append({'name': name, 'url': str(show_id), 'mode': 'getMovie', 'type': 'dir',
                         'images': {'thumb': thumb, 'fanart': fanart}})
 
@@ -225,15 +239,21 @@ def list_movies(data):
                 xbmc.log( "LISTT: SKIPPING " + str(name))
             else:
                 name += '   [COLOR FFFF0000]Missing[/COLOR] '
-                thumb = host_url + show['images'][0]['url'] + '?lastWrite=&apikey={}'.format(api_key)
+                if show['images']:
+                    thumb = host_url + show['images'][0]['url'] + '?lastWrite=&apikey={}'.format(api_key)
+                else:
+                    thumb = None
                 #banner = host_url + show['images'][1]['url'] + '&apikey={}'.format(api_key)
-                fanart = host_url + show['images'][1]['url'] + '?lastWrite=&apikey={}'.format(api_key)
+                if len(show['images']) > 1:
+                    fanart = host_url + show['images'][1]['url'] + '?lastWrite=&apikey={}'.format(api_key)
+                else:
+                    fanart = None
                 show_id = show['id']
-                seasons = 'na'
-                dir_show = get_appended_path(dir_movies, str(show_id))
-                file = 'seasons.json'
-                file_path = get_appended_path(dir_show, file)
-                write_json(file_path, seasons)
+                #seasons = 'na'
+                #dir_show = get_appended_path(dir_movies, str(show_id))
+                #file = 'seasons.json'
+                #file_path = get_appended_path(dir_show, file)
+                #write_json(file_path, seasons)
                 shows.append({'name': name, 'url': str(show_id), 'mode': 'getMovie', 'type': 'dir',
                             'images': {'thumb': thumb, 'fanart': fanart}})
 
@@ -244,7 +264,7 @@ def list_movies(data):
     xbmcplugin.addSortMethod(pluginhandle, xbmcplugin.SORT_METHOD_LABEL_IGNORE_THE)
     xbmcplugin.endOfDirectory(pluginhandle)
     guiUpdateTimer = threading.Timer(
-        60.0, # fire after  4 seconds
+        60.0, # fire after 60 seconds
         refreshGuiItems)
     guiUpdateTimer.start()
 
@@ -257,10 +277,10 @@ def get_movie(name, movie_id):
     #Show select dialog
     term = dialog.select('Radarr', ['Remove Movie from Watched List', 'Play Movie', 'Search for downloads'])
     #Remove from watched list
-    if term is 0:
+    if term == 0:
         snr.delete_movie(movie_id)
     #Play Movie
-    if term is 1:
+    if term == 1:
         data = snr.get_movie_by_id(movie_id)
         path = data['folderName']
         json_query = xbmc.executeJSONRPC('{"jsonrpc": "2.0", "method": "VideoLibrary.GetMovies", "params": {"filter": {"field": "path", "operator": "contains", "value": "%s"}, "properties" : ["file"]}, "id": 1}' % path)
@@ -268,7 +288,7 @@ def get_movie(name, movie_id):
         movid = json_query['result']['movies'][0]['movieid']
         xbmc.executeJSONRPC('{"jsonrpc": "2.0", "method": "Player.Open", "params": {"item": {"movieid": %s}, "options":{ "resume":true }}, "id": 1}' % movid)
     #Search for downloads
-    if term is 2:
+    if term == 2:
         data = snr.get_movie_by_id(movie_id)
         xbmc.log("SEARCH : " + repr(data),level=2)
         search_individual(movie_id)
@@ -277,6 +297,7 @@ def get_movie(name, movie_id):
 def get_all_movies():
     data = snr.get_movies()
     ord_data = sorted(data, key=lambda k: k['title'])   # order titles alphabetically
+    xbmc.log("All Movies: "+str(ord_data))
     list_movies(ord_data)
 
 def get_queue():
@@ -296,11 +317,11 @@ def get_queue():
         name += '      [COLOR FF3576F9]%s%%[/COLOR] ' % round(perc, 1)
         name += ' [COLOR FF3576F9]of  %sGB[/COLOR] ' % round(totalsize, 2)
         show_id = show['id']
-        seasons = 'na'
-        dir_show = get_appended_path(dir_movies, str(show_id))
-        file = 'seasons.json'
-        file_path = get_appended_path(dir_show, file)
-        write_json(file_path, seasons)
+        #seasons = 'na'
+        #dir_show = get_appended_path(dir_movies, str(show_id))
+        #file = 'seasons.json'
+        #file_path = get_appended_path(dir_show, file)
+        #write_json(file_path, seasons)
         shows.append({'name': name, 'url': str(show_id), 'mode': 'getShow', 'type': 'dir',
                       'images': {'thumb': thumb, 'fanart': fanart}})
     add_entries(shows)

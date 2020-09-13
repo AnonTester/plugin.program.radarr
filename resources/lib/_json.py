@@ -1,11 +1,14 @@
-import os
+import os, sys
 import io
 import json
 import xbmc, xbmcvfs, xbmcaddon
 
 addonID = "plugin.program.radarr"
 addon = xbmcaddon.Addon(id=addonID)
-dir_userdata = xbmc.translatePath(addon.getAddonInfo('profile'))
+if sys.version_info.major == 3:
+    dir_userdata = xbmcvfs.translatePath(addon.getAddonInfo('profile'))
+else:
+    dir_userdata = xbmc.translatePath(addon.getAddonInfo('profile'))
 dir_db = os.path.join(dir_userdata, 'db')
 dir_movies = os.path.join(dir_db, 'movies')
 #dir_seasons = os.path.join(dir_movie, 'seasons')
