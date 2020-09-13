@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<settings>
+    <category label="30100">
+        <setting label="30121" type="text" id="base-url" default="http://example.com:8989"/>
+        <setting label="30122" type="text" id="api-key" default=""/>
+    </category>
+	<category label="30102">
+        <setting label="30113" type="lsep"/>
+        <setting label="30134" type="bool" id="view-miss" default="true"/>
+    </category>
+    <category label="30103">
+      <setting label="30104" type="select"    id="preferred_quality"    default="Choose On Search" values="Choose On Search|Any|SD|HD-720p|HD-1080p|Ultra-HD|HD-720p/1080p" />
+      </category>
+</settings>
